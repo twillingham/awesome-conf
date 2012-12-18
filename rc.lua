@@ -7,7 +7,7 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
---vicious = require("vicious")
+vicious = require("vicious")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -146,7 +146,7 @@ mysystray = widget({ type = "systray" })
 -- Register widget
 -- vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
 
---batwidget = widget({ type = "textbox" })
+batwidget = widget({ type = "textbox" })
 
 --batwidget = awful.widget.progressbar()
 --batwidget:set_width(8)
@@ -156,10 +156,10 @@ mysystray = widget({ type = "systray" })
 --batwidget:set_border_color(nil)
 --batwidget:set_color("#AECF96")
 --batwidget:set_gradient_colors({ "#AECF96", "#88A175", "#FF5656" })
---vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $3</span>', 61, "BAT0")
+vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $3</span>', 61, "BAT0")
 
---uptime = widget({ type = "textbox" })
---vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
+uptime = widget({ type = "textbox" })
+vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -238,8 +238,8 @@ for s = 1, screen.count() do
         mytextclock,
         --cpuwidget,
         --netwidget,
-        --batwidget,
-        --uptime,
+        batwidget,
+        uptime,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
