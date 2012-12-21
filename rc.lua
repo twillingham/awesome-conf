@@ -134,6 +134,9 @@ mytextclock = awful.widget.textclock({ align = "right" })
 -- Create a systray
 mysystray = widget({ type = "systray" })
 
+seperator = widget({ type ="textbox" })
+seperator.text = ' | '
+
 
 -- Create a cpu graph
 -- Initialize widget
@@ -160,6 +163,18 @@ vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $
 
 uptime = widget({ type = "textbox" })
 vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
+
+mpdwidget = widget({ type = "textbox" })
+vicious.register(mpdwidget, vicious.widgets.mpd,
+function (widget, args)
+  if   args["{state}"] == "Stop" then return ""
+  elseif args["{state}"] == "N/A" then return "MPD: Not Started"
+  elseif args["{state}"] == "Pause" then return '<span color="#fedcba">Paused</span>'
+  else return '<span color="#abcdef">MPD: ('..
+        args["{volume}"] .. ') ' .. args["{Artist}"]..' - '.. args["{Title}"] .. '</span>'
+  end
+end)
+
 -- Create a wibox for each screen and add it
 mywibox = {}
 mypromptbox = {}
@@ -238,8 +253,13 @@ for s = 1, screen.count() do
         mytextclock,
         --cpuwidget,
         --netwidget,
+        seperator,
         batwidget,
+        seperator,
         uptime,
+        seperator,
+        mpdwidget,
+        s == 1 and seperator or nil,
         s == 1 and mysystray or nil,
         mytasklist[s],
         layout = awful.widget.layout.horizontal.rightleft
