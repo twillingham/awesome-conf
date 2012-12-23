@@ -7,6 +7,13 @@ require("beautiful")
 -- Notification library
 require("naughty")
 
+function file_exists(name)
+   local f=io.open(name,"r")
+   if f~=nil then io.close(f) return true else return false end
+end
+
+
+
 vicious = require("vicious")
 
 -- {{{ Error handling
@@ -40,7 +47,11 @@ end
 beautiful.init("/home/willow/.config/awesome/themes/zenburn/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "urxvt256c"
+if file_exists('/usr/bin/urxvt256c') then
+	terminal = "urxvt256c"
+else
+	terminal = "urxvt"
+end
 --terminal = "gnome-terminal"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
