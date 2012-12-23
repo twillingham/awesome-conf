@@ -12,13 +12,20 @@ function file_exists(name)
    if f~=nil then io.close(f) return true else return false end
 end
 
-function run_once(cmd)
-  findme = cmd
-  firstspace = cmd:find(" ")
-  if firstspace then
-    findme = cmd:sub(0, firstspace-1)
-  end
-  awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
+function run_once(prg,arg_string,pname,screen)
+    if not prg then
+        do return nil end
+    end
+
+    if not pname then
+       pname = prg
+    end
+
+    if not arg_string then 
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. "' || (" .. prg .. ")",screen)
+    else
+        awful.util.spawn_with_shell("pgrep -f -u $USER -x '" .. pname .. " ".. arg_string .."' || (" .. prg .. " " .. arg_string .. ")",screen)
+    end
 end
 
 
@@ -495,3 +502,4 @@ run_once("nm-applet")
 run_once("gnome-screensaver")
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
 
+--run_once("pidgin",nil,nil,2)
