@@ -12,6 +12,14 @@ function file_exists(name)
    if f~=nil then io.close(f) return true else return false end
 end
 
+function run_once(cmd)
+  findme = cmd
+  firstspace = cmd:find(" ")
+  if firstspace then
+    findme = cmd:sub(0, firstspace-1)
+  end
+  awful.util.spawn_with_shell("pgrep -u $USER -x " .. findme .. " > /dev/null || (" .. cmd .. ")")
+end
 
 
 vicious = require("vicious")
@@ -482,8 +490,8 @@ client.add_signal("focus", function(c) c.border_color = beautiful.border_focus e
 client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 --
-awful.util.spawn_with_shell("/usr/libexec/polkit-gnome-authentication-agent-1")
-awful.util.spawn_with_shell("/home/willow/.local/bin/run_once nm-applet")
-awful.util.spawn_with_shell("/home/willow/.local/bin/run_once gnome-screensaver")
+run_once("/usr/libexec/polkit-gnome-authentication-agent-1")
+run_once("nm-applet")
+run_once("gnome-screensaver")
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
 
