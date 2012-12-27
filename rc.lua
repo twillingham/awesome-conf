@@ -67,6 +67,12 @@ if file_exists('/usr/bin/urxvt256c') then
 else
 	terminal = "urxvt"
 end
+
+if file_exists('/home/willow/Downloads/firefox-nightly/firefox') then
+	firefox = "/home/willow/Downloads/firefox-nightly/firefox"
+else
+	firefox = "firefox"
+end
 --terminal = "gnome-terminal"
 editor = os.getenv("EDITOR") or "vim"
 editor_cmd = terminal .. " -e " .. editor
@@ -130,7 +136,7 @@ myawesomemenu = {
 runonce = {
    { "weechat", terminal .. " -T weechat -e weechat-curses" },
    { "ncmpcpp", terminal .. " -T ncmpcpp -e ncmpcpp" },
-   { "Firefox", "/home/willow/Downloads/firefox-nightly/firefox" },
+   { "Firefox", firefox },
    { "Virt Manager", "/usr/bin/virt-manager" },
    { "Mutt", terminal .. " -T mutt -e mutt" },
 }
