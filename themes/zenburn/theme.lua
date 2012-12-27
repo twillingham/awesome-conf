@@ -8,7 +8,7 @@
 
 -- {{{ Main
 theme = {}
-theme.wallpaper_cmd = { "awsetbg -a -c ${HOME}/Pictures/current_wallpaper" }
+theme.wallpaper_cmd = { "awsetbg -a -c " .. os.getenv("HOME") .. "/Pictures/current_wallpaper" }
 --theme.wallpaper_cmd = { "awsetbg /usr/share/awesome/themes/zenburn/zenburn-background.png" }
 -- }}}
 
