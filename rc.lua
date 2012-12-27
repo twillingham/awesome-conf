@@ -68,8 +68,8 @@ else
 	terminal = "urxvt"
 end
 
-if file_exists('/home/willow/Downloads/firefox-nightly/firefox') then
-	firefox = "/home/willow/Downloads/firefox-nightly/firefox"
+if file_exists(os.getenv('HOME') .. '/Downloads/firefox-nightly/firefox') then
+	firefox = os.getenv('HOME') .. '/Downloads/firefox-nightly/firefox'
 else
 	firefox = "firefox"
 end
