@@ -199,10 +199,17 @@ function (widget, args)
   if   args["{state}"] == "Stop" then return '<span color="#fedcba">Stopped</span>'
   elseif args["{state}"] == "N/A" then return "Not Started"
   elseif args["{state}"] == "Pause" then return '<span color="#fedcba">Paused</span>'
-  else return '<span color="#abcdef">['..
-        args["{volume}"] .. '] ' .. args["{Artist}"]..' - '.. args["{Title}"] .. '</span>'
+  else return '<span color="#abcdef">'.. args["{Artist}"]..' - '.. args["{Title}"] .. '</span>'
   end
 end)
+
+volumewidget = widget({ type = "textbox"})
+vicious.register(volumewidget, vicious.widgets.volume,
+function(widget, args)
+ local label = { ["♫"] = "♫", ["♩"] = "M" }
+ return label[args[2]] .. " " .. args[1]
+end, 2, "Master")
+
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -288,6 +295,8 @@ for s = 1, screen.count() do
         uptime,
         seperator,
         mpdwidget,
+        seperator,
+        volumewidget,
         s == 1 and seperator or nil,
         s == 1 and mysystray or nil,
         mytasklist[s],
