@@ -170,28 +170,25 @@ seperator = widget({ type ="textbox" })
 seperator.text = ' | '
 
 
--- Create a cpu graph
+--[[Create a cpu graph
 -- Initialize widget
--- cpuwidget = awful.widget.graph()
+--cpuwidget = awful.widget.graph()
 -- Graph properties
--- cpuwidget:set_width(50)
--- cpuwidget:set_background_color("#494B4F")
--- cpuwidget:set_color("#FF5656")
--- cpuwidget:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
+cpuwidget:set_width(50)
+cpuwidget:set_background_color("#494B4F")
+cpuwidget:set_color("#FF5656")
+cpuwidget:set_gradient_colors({ "#FF5656", "#88A175", "#AECF96" })
 -- Register widget
--- vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
+vicious.register(cpuwidget, vicious.widgets.cpu, "$1")
+]]
 
-batwidget = widget({ type = "textbox" })
-
---batwidget = awful.widget.progressbar()
---batwidget:set_width(8)
---batwidget:set_height(10)
---batwidget:set_vertical(true)
---batwidget:set_background_color("#494B4F")
---batwidget:set_border_color(nil)
---batwidget:set_color("#AECF96")
---batwidget:set_gradient_colors({ "#AECF96", "#88A175", "#FF5656" })
-vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $3</span>', 61, "BAT0")
+local showbat = 0
+if file_exists('/sys/class/power_supply/BAT0/present')
+then
+    showbat = 1
+    batwidget = widget({ type = "textbox" })
+    vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $3</span>', 61, "BAT0")
+end
 
 uptime = widget({ type = "textbox" })
 vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
@@ -285,8 +282,8 @@ for s = 1, screen.count() do
         mytextclock,
         --cpuwidget,
         --netwidget,
-        seperator,
-        batwidget,
+        showbat == 1 and separator or nil,
+        showbat == 1 and batwidget or nil,
         seperator,
         uptime,
         seperator,
