@@ -199,11 +199,11 @@ vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
 mpdwidget = widget({ type = "textbox" })
 vicious.register(mpdwidget, vicious.widgets.mpd,
 function (widget, args)
-  if   args["{state}"] == "Stop" then return ""
-  elseif args["{state}"] == "N/A" then return "MPD: Not Started"
+  if   args["{state}"] == "Stop" then return '<span color="#fedcba">Stopped</span>'
+  elseif args["{state}"] == "N/A" then return "Not Started"
   elseif args["{state}"] == "Pause" then return '<span color="#fedcba">Paused</span>'
-  else return '<span color="#abcdef">MPD: ('..
-        args["{volume}"] .. ') ' .. args["{Artist}"]..' - '.. args["{Title}"] .. '</span>'
+  else return '<span color="#abcdef">['..
+        args["{volume}"] .. '] ' .. args["{Artist}"]..' - '.. args["{Title}"] .. '</span>'
   end
 end)
 
