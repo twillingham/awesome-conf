@@ -12,6 +12,10 @@ function file_exists(name)
    if f~=nil then io.close(f) return true else return false end
 end
 
+function volchange(amount)
+	awful.util.spawn("/usr/bin/amixer set Master " .. amount, false)
+end
+
 function run_once(prg,arg_string,pname,screen)
     if not prg then
         do return nil end
@@ -213,6 +217,24 @@ function(widget, args)
  return label[args[2]] .. " " .. args[1]
 end, 2, "Master")
 
+volumewidget:buttons(awful.util.table.join(
+                    awful.button({ }, 2,
+                        function (e)
+                                volchange("toggle")
+                                vicious.force({ e, })
+                        end),
+                    awful.button({ }, 4,
+                        function (e)
+                                volchange("10%+")
+                                vicious.force({ e, })
+                        end),
+                    awful.button({ }, 5,
+                        function (e)
+                                volchange("10%-")
+                                vicious.force({ e, })
+                        end)
+        ))
+
 
 -- Create a wibox for each screen and add it
 mywibox = {}
@@ -336,9 +358,9 @@ globalkeys = awful.util.table.join(
     awful.key({ }                 , "XF86AudioPlay", function () awful.util.spawn("/usr/bin/ncmpcpp toggle") end),
     awful.key({ }                 , "XF86AudioPrev", function () awful.util.spawn("/usr/bin/ncmpcpp prev") end),
     awful.key({ }                 , "XF86AudioNext", function () awful.util.spawn("/usr/bin/ncmpcpp next") end),
-    awful.key({ }                 , "XF86AudioRaiseVolume", function () awful.util.spawn("/usr/bin/amixer set Master 10%+") end),
-    awful.key({ }                 , "XF86AudioLowerVolume", function () awful.util.spawn("/usr/bin/amixer set Master 10%-") end),
-    awful.key({ }                 , "XF86AudioMute", function () awful.util.spawn("/usr/bin/amixer set Master toggle") end),
+    awful.key({ }                 , "XF86AudioRaiseVolume", function () volchange("10%+") end),
+    awful.key({ }                 , "XF86AudioLowerVolume", function () volchange("10%-") end),
+    awful.key({ }                 , "XF86AudioMute", function () volchange("toggle") end),
 
     -- Layout manipulation
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.byidx(  1)    end),
