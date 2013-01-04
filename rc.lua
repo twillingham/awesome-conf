@@ -126,6 +126,9 @@ for s = 2, screen.count() do
         }
     )
 end
+
+-- Comm has a specific ratio that I want.
+awful.tag.setmwfact(0.25, tags[1][2])
 -- }}}
 
 -- {{{ Menu
