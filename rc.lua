@@ -13,7 +13,11 @@ function file_exists(name)
 end
 
 function volchange(amount)
-	awful.util.spawn("/usr/bin/amixer set Master " .. amount, false)
+    awful.util.spawn("/usr/bin/amixer -D pulse set Master " .. amount, false)
+end
+
+function controlmpd(command)
+    awful.util.spawn("/usr/bin/ncmpcpp " .. command, false)
 end
 
 function run_once(prg,arg_string,pname,screen)
@@ -213,6 +217,28 @@ function (widget, args)
   end
 end)
 
+mpdwidget:buttons(awful.util.table.join(
+                    awful.button({ }, 1,
+                        function (e)
+                                vicious.force({ e, })
+                        end),
+                    awful.button({ }, 2,
+                        function (e)
+                                controlmpd('toggle')
+                                vicious.force({ e, })
+                        end),
+                    awful.button({ }, 4,
+                        function (e)
+                                controlmpd('prev')
+                                vicious.force({ e, })
+                        end),
+                    awful.button({ }, 5,
+                        function (e)
+                                controlmpd('next')
+                                vicious.force({ e, })
+                        end)
+    ))
+
 volumewidget = widget({ type = "textbox"})
 vicious.register(volumewidget, vicious.widgets.volume,
 function(widget, args)
@@ -221,6 +247,10 @@ function(widget, args)
 end, 2, "Master")
 
 volumewidget:buttons(awful.util.table.join(
+                    awful.button({ }, 1,
+                        function (e)
+                                vicious.force({ e, })
+                        end),
                     awful.button({ }, 2,
                         function (e)
                                 volchange("toggle")
@@ -358,9 +388,9 @@ globalkeys = awful.util.table.join(
             if client.focus then client.focus:raise() end
         end),
     awful.key({ modkey,           }, "w", function () mymainmenu:show({keygrabber=true}) end),
-    awful.key({ }                 , "XF86AudioPlay", function () awful.util.spawn("/usr/bin/ncmpcpp toggle") end),
-    awful.key({ }                 , "XF86AudioPrev", function () awful.util.spawn("/usr/bin/ncmpcpp prev") end),
-    awful.key({ }                 , "XF86AudioNext", function () awful.util.spawn("/usr/bin/ncmpcpp next") end),
+    awful.key({ }                 , "XF86AudioPlay", function () controlmpd('toggle') end),
+    awful.key({ }                 , "XF86AudioPrev", function () controlmpd('prev') end),
+    awful.key({ }                 , "XF86AudioNext", function () controlmpd('next') end),
     awful.key({ }                 , "XF86AudioRaiseVolume", function () volchange("10%+") end),
     awful.key({ }                 , "XF86AudioLowerVolume", function () volchange("10%-") end),
     awful.key({ }                 , "XF86AudioMute", function () volchange("toggle") end),
