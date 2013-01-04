@@ -191,7 +191,10 @@ then
 end
 
 uptime = widget({ type = "textbox" })
-vicious.register(uptime, vicious.widgets.uptime, '$1d $2:$3 ', 60)
+vicious.register(uptime, vicious.widgets.uptime,
+	function(widget, args)
+		return string.format('%dd %02d:%02d', args[1], args[2], args[3])
+	end, 60)
 
 mpdwidget = widget({ type = "textbox" })
 vicious.register(mpdwidget, vicious.widgets.mpd,
