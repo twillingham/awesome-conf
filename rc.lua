@@ -570,6 +570,8 @@ client.add_signal("unfocus", function(c) c.border_color = beautiful.border_norma
 run_once("/usr/libexec/polkit-gnome-authentication-agent-1")
 run_once("nm-applet")
 run_once("gnome-screensaver")
+awful.util.spawn_with_shell("setxkbmap -option", false)
+awful.util.spawn_with_shell("setxkbmap -option ctrl:nocaps", false)
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
 
 --run_once("pidgin",nil,nil,2)
