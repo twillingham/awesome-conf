@@ -576,7 +576,13 @@ client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_n
 --
 run_once("/usr/libexec/polkit-gnome-authentication-agent-1")
 run_once("nm-applet")
-run_once("gnome-screensaver")
+
+if file_exists('/usr/bin/gnome-screensaver')
+then
+    run_once("gnome-screensaver")
+else
+    run_once("xscreensaver --no-splash")
+end
 awful.util.spawn_with_shell("setxkbmap -option", false)
 awful.util.spawn_with_shell("setxkbmap -option ctrl:nocaps", false)
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
