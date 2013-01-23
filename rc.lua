@@ -1,11 +1,14 @@
--- Standard awesome library
-require("awful")
+local gears = require("gears")
+local awful = require("awful")
+awful.rules = require("awful.rules")
 require("awful.autofocus")
-require("awful.rules")
+-- Widget and layout library
+local wibox = require("wibox")
 -- Theme handling library
-require("beautiful")
+local beautiful = require("beautiful")
 -- Notification library
-require("naughty")
+local naughty = require("naughty")
+local menubar = require("menubar")
 
 function file_exists(name)
    local f=io.open(name,"r")
@@ -51,7 +54,7 @@ end
 -- Handle runtime errors after startup
 do
     local in_error = false
-    awesome.add_signal("debug::error", function (err)
+    awesome.connect_signal("debug::error", function (err)
         -- Make sure we don't go into an endless error loop
         if in_error then return end
         in_error = true
@@ -160,7 +163,7 @@ mymainmenu = awful.menu({ items = { { "awesome", myawesomemenu, beautiful.awesom
                                   }
                         })
 
-mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
+mylauncher = awful.widget.launcher({ image = beautiful.awesome_icon,
                                      menu = mymainmenu })
 -- }}}
 
@@ -172,13 +175,10 @@ mylauncher = awful.widget.launcher({ image = image(beautiful.awesome_icon),
 --vicious.register(netwidget, vicious.widgets.net, '<span color="#CC9393">${wlan0 down_kb}</span> <span color="#7F9F7F">${wlan0 up_kb}</span>', 3)
 
 -- Create a textclock widget
-mytextclock = awful.widget.textclock({ align = "right" })
+mytextclock = awful.widget.textclock()
 
--- Create a systray
-mysystray = widget({ type = "systray" })
-
-seperator = widget({ type ="textbox" })
-seperator.text = ' | '
+seperator = wibox.widget.textbox()
+seperator:set_text(' | ')
 
 
 --[[Create a cpu graph
@@ -197,17 +197,17 @@ local showbat = 0
 if file_exists('/sys/class/power_supply/BAT0/present')
 then
     showbat = 1
-    batwidget = widget({ type = "textbox" })
+    batwidget = wibox.widget.textbox()
     vicious.register(batwidget, vicious.widgets.bat, '<span color="#AECF96">$1 $2% $3</span>', 61, "BAT0")
 end
 
-uptime = widget({ type = "textbox" })
+uptime = wibox.widget.textbox()
 vicious.register(uptime, vicious.widgets.uptime,
                 function(widget, args)
                         return string.format('%dd %02d:%02d', args[1], args[2], args[3])
                 end, 60)
 
-mpdwidget = widget({ type = "textbox" })
+mpdwidget = wibox.widget.textbox()
 vicious.register(mpdwidget, vicious.widgets.mpd,
 function (widget, args)
   if   args["{state}"] == "Stop" then return '<span color="#fedcba">Stopped</span>'
@@ -239,7 +239,7 @@ mpdwidget:buttons(awful.util.table.join(
                         end)
     ))
 
-volumewidget = widget({ type = "textbox"})
+volumewidget = wibox.widget.textbox()
 vicious.register(volumewidget, vicious.widgets.volume,
 function(widget, args)
  local label = { ["♫"] = "♫", ["♩"] = "M" }
@@ -316,7 +316,7 @@ mytasklist.buttons = awful.util.table.join(
 
 for s = 1, screen.count() do
     -- Create a promptbox for each screen
-    mypromptbox[s] = awful.widget.prompt({ layout = awful.widget.layout.horizontal.leftright })
+    mypromptbox[s] = awful.widget.prompt()
     -- Create an imagebox widget which will contains an icon indicating which layout we're using.
     -- We need one layoutbox per screen.
     mylayoutbox[s] = awful.widget.layoutbox(s)
@@ -326,40 +326,45 @@ for s = 1, screen.count() do
                            awful.button({ }, 4, function () awful.layout.inc(layouts, 1) end),
                            awful.button({ }, 5, function () awful.layout.inc(layouts, -1) end)))
     -- Create a taglist widget
-    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.label.all, mytaglist.buttons)
+    mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
     -- Create a tasklist widget
-    mytasklist[s] = awful.widget.tasklist(function(c)
-                                              return awful.widget.tasklist.label.currenttags(c, s)
-                                          end, mytasklist.buttons)
+    mytasklist[s] = awful.widget.tasklist(s, awful.widget.tasklist.filter.currenttags, mytasklist.buttons)
 
     -- Create the wibox
     mywibox[s] = awful.wibox({ position = "top", screen = s })
-    -- Add widgets to the wibox - order matters
-    mywibox[s].widgets = {
-        {
-            mylauncher,
-            mytaglist[s],
-            mypromptbox[s],
-            layout = awful.widget.layout.horizontal.leftright
-        },
-        mylayoutbox[s],
-        mytextclock,
-        --cpuwidget,
-        --netwidget,
-        showbat == 1 and separator or nil,
-        showbat == 1 and batwidget or nil,
-        seperator,
-        uptime,
-        seperator,
-        mpdwidget,
-        seperator,
-        volumewidget,
-        s == 1 and seperator or nil,
-        s == 1 and mysystray or nil,
-        mytasklist[s],
-        layout = awful.widget.layout.horizontal.rightleft
-    }
+    -- Widgets that are aligned to the left
+    local left_layout = wibox.layout.fixed.horizontal()
+    left_layout:add(mylauncher)
+    left_layout:add(mytaglist[s])
+    left_layout:add(mypromptbox[s])
+
+    -- Widgets that are aligned to the right
+    local right_layout = wibox.layout.fixed.horizontal()
+    if s == 1 then right_layout:add(wibox.widget.systray()) end
+	right_layout:add(volumewidget)
+    right_layout:add(seperator)
+	right_layout:add(mpdwidget)
+    right_layout:add(seperator)
+	right_layout:add(uptime)
+    right_layout:add(seperator)
+    if showbat == 1 then
+        right_layout:add(batwidget)
+        right_layout:add(seperator)
+    end
+    right_layout:add(mytextclock)
+    right_layout:add(mylayoutbox[s])
+
+    -- Now bring it all together (with the tasklist in the middle)
+    local layout = wibox.layout.align.horizontal()
+    layout:set_left(left_layout)
+    layout:set_middle(mytasklist[s])
+    layout:set_right(right_layout)
+
+    mywibox[s]:set_widget(layout)
+
+    --cpuwidget,
+    --netwidget,
 end
 -- }}}
 
@@ -538,12 +543,12 @@ awful.rules.rules = {
 
 -- {{{ Signals
 -- Signal function to execute when a new client appears.
-client.add_signal("manage", function (c, startup)
+client.connect_signal("manage", function (c, startup)
     -- Add a titlebar
     -- awful.titlebar.add(c, { modkey = modkey })
 
     -- Enable sloppy focus
-    c:add_signal("mouse::enter", function(c)
+    c:connect_signal("mouse::enter", function(c)
         if awful.layout.get(c.screen) ~= awful.layout.suit.magnifier
             and awful.client.focus.filter(c) then
             client.focus = c
@@ -563,8 +568,8 @@ client.add_signal("manage", function (c, startup)
     end
 end)
 
-client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.connect_signal("focus", function(c) c.border_color = beautiful.border_focus end)
+client.connect_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
 -- }}}
 --
 run_once("/usr/libexec/polkit-gnome-authentication-agent-1")
