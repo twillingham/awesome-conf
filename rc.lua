@@ -116,9 +116,9 @@ layouts =
 -- {{{ Tags
 -- Define a tag table which hold all screen tags.
 tags = {}
-    tags[1] = awful.tag({ "ಠ_ಠ", "Mail", 3, 4, 5, 6, 7, 8, "VM" }, 1,
+    tags[1] = awful.tag({ "WWW", "Mail", 3, 4, 5, 6, 7, 8, "VM" }, 1,
         {
-            layouts[1], layouts[5], layouts[2],
+            layouts[5], layouts[5], layouts[2],
             layouts[2], layouts[2], layouts[2],
             layouts[2], layouts[2], layouts[1]
         }
