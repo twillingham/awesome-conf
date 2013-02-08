@@ -115,7 +115,7 @@ layouts =
 tags = {}
     tags[1] = awful.tag({ "ಠ_ಠ", "Mail", 3, 4, 5, 6, 7, 8, "VM" }, 1,
         {
-            layouts[1], layouts[5], layouts[2],
+            layouts[3], layouts[5], layouts[2],
             layouts[2], layouts[2], layouts[2],
             layouts[2], layouts[2], layouts[1]
         }
