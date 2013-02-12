@@ -579,7 +579,7 @@ run_once("gnome-screensaver")
 awful.util.spawn_with_shell("setxkbmap -option", false)
 awful.util.spawn_with_shell("setxkbmap -option ctrl:nocaps", false)
 if file_exists('/usr/bin/xcompmgr') then
-    run_once('/usr/bin/xcompmgr -Cf')
+    run_once('/usr/bin/xcompmgr -C')
 end
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
 
