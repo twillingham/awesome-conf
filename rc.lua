@@ -563,8 +563,14 @@ client.add_signal("manage", function (c, startup)
     end
 end)
 
-client.add_signal("focus", function(c) c.border_color = beautiful.border_focus end)
-client.add_signal("unfocus", function(c) c.border_color = beautiful.border_normal end)
+client.add_signal("focus", function(c)
+    c.border_color = beautiful.border_focus
+    c.opacity = 1.0
+end)
+client.add_signal("unfocus", function(c)
+    c.border_color = beautiful.border_normal
+    c.opacity = 0.8
+end)
 -- }}}
 --
 run_once("/usr/libexec/polkit-gnome-authentication-agent-1")
@@ -572,6 +578,9 @@ run_once("nm-applet")
 run_once("gnome-screensaver")
 awful.util.spawn_with_shell("setxkbmap -option", false)
 awful.util.spawn_with_shell("setxkbmap -option ctrl:nocaps", false)
+if file_exists('/usr/bin/xcompmgr') then
+    run_once('/usr/bin/xcompmgr -Cf')
+end
 --awful.util.spawn_with_shell("/usr/bin/ssh-agent /usr/bin/urxvt256cd -q -f -o")
 
 --run_once("pidgin",nil,nil,2)
